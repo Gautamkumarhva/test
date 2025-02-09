@@ -8,6 +8,7 @@
   <meta content="description" name="description" />
   <meta name="google" content="notranslate" />
   <meta content="Mashup templates have been developped by Orson.io team" name="Gautam Kumar" />
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 
   <!-- Disable tap highlight on IE -->
   <meta name="msapplication-tap-highlight" content="no" />
@@ -57,13 +58,8 @@
           <div class="hero-full-wrapper">
             <div class="text-content">
               <h1>
-                <span id="typed-strings">
-                  <span>What's up!</span>
-                  <span>I'm Gautam/span>
-                  <span>A cybersecurity student</span>
-                </span>
                 <span id="typed"></span>
-              </h1>
+              </h1>              
             </div>
           </div>
         </div>
@@ -73,10 +69,22 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function (event) {
-      type();
+      new Typed("#typed", {
+        strings: [
+          "What's up!",
+          "I'm Gautam",
+          "A cybersecurity student!"
+        ],
+        typeSpeed: 50,
+        backSpeed: 25,
+        loop: true
+      });
+  
       movingBackgroundImage();
     });
   </script>
+  
+  
 
   <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
