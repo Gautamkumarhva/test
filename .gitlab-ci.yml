@@ -6,4 +6,4 @@ deploy-job:
   script:    
     -az login     
     -az account set --subscription " ***** "    
-    -az group lis
+    -az group list
