@@ -1,0 +1,9 @@
+deploy-job:  
+  tags:    
+  - hva  image: mcr.microsoft.com/azure-cli  
+  
+  stage: deploy  
+  script:    
+    -az login     
+    -az account set --subscription " ***** "    
+    -az group lis

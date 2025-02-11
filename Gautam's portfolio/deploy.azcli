@@ -35,13 +35,14 @@ az webapp create\
     --runtime 'PYTHON:3.11' \
     --resource-group $RESOURCE_GROUP_NAME \
     --query 'defaultHostName' \
-    --output table
+    --output table 
+    --src_path="/my-onboarding-project/Gautam's portfolio/app.py"
 
-# az webapp up\
-#    --name $APP_SERVICE_NAME \
-#    --plan $APP_SERVICE_PLAN_NAME\
-#    --runtime 'PYTHON:3.11' \
-#    --resource-group $RESOURCE_GROUP_NAME \
-#    --query 'defaultHostName' \
-#    --output table
+az webapp up\
+  --name $APP_SERVICE_NAME \
+  --plan $APP_SERVICE_PLAN_NAME\
+  --runtime 'PYTHON:3.11' \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --query 'defaultHostName' \
+  --output table
 
