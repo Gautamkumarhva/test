@@ -6,5 +6,5 @@ deploy-job:
   stage: deploy  
   script:    
     - az login     
-    - az account set --subscription " ***** "    
+    - az account set --subscription "Azure for Students"    
     - az group list
