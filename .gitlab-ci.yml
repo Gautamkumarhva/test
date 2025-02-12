@@ -5,6 +5,6 @@ deploy-job:
   
   stage: deploy  
   script:    
-    -az login     
-    -az account set --subscription " ***** "    
-    -az group list
+    - az login     
+    - az account set --subscription " ***** "    
+    - az group list
