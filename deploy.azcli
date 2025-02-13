@@ -36,7 +36,7 @@ az webapp create\
     --resource-group $RESOURCE_GROUP_NAME \
     --query 'defaultHostName' \
     --output table 
-    --src_path="/my-onboarding-project/Gautam's portfolio/app.py"
+    --src_path="/test/app.py"
 
 az webapp up\
   --name $APP_SERVICE_NAME \
