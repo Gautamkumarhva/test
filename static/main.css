@@ -6191,3 +6191,66 @@ textarea {
     float: left;
     margin-right: 5px
 }
+
+
+/* Interest section styling */
+.interest-item {
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  .interest-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .interest-item h3 {
+    font-size: 1.5em;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+  
+  .interest-item p {
+    font-size: 1.1em;
+    color: #34495e;
+    line-height: 1.6;
+  }
+  
+  /* Icons color */
+  .interest-item h3::before {
+    margin-right: 10px;
+    font-size: 1.7em;
+  }
+  
+  /* Custom colors for each interest */
+  .interest-item:nth-child(1) {
+    border-left: 8px solid #3498db; /* Blue for Chess */
+  }
+  
+  .interest-item:nth-child(2) {
+    border-left: 8px solid #e74c3c; /* Red for Basketball */
+  }
+  
+  .interest-item:nth-child(3) {
+    border-left: 8px solid #9b59b6; /* Purple for Rapping */
+  }
+  
+  /* Add responsiveness */
+  @media (max-width: 767px) {
+    .interest-item {
+      padding: 15px;
+    }
+  
+    .interest-item h3 {
+      font-size: 1.3em;
+    }
+  
+    .interest-item p {
+      font-size: 1em;
+    }
+  }
+  
