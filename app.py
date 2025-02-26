@@ -1,30 +1,39 @@
 import csv
 from flask import Flask, render_template, url_for, request, redirect
-app = Flask(__name__)
-
-# mysqlconnector
 import pandas as pd
 from sqlalchemy import create_engine, text
 import mysql.connector
+import os
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
-host = 'oege.ie.hva.nl'
-database = 'zkumarg'
-user = 'kumarg'
-password = '3iJnwqAn8tLjm+ep'
+app = Flask(__name__)
+
+KEY_VAULT_URL = os.getenv("KEY_VAULT_URL", "https://KeyVault2025xyz.vault.azure.net/")
+
+credential = DefaultAzureCredential()
+
+client = SecretClient(vault_url=KEY_VAULT_URL, credential=credential)
+
+db_host = client.get_secret("DBHost").value
+db_name = client.get_secret("DBName").value
+db_user = client.get_secret("DBUser").value
+db_password = client.get_secret("Secretsecret").value
+
 
 # Establish connection using mysql.connector
 connection = mysql.connector.connect(
-    host=host,
-    database=database,
-    user=user,
-    password=password
+    host=db_host,
+    database=db_name,
+    user=db_user,
+    password=db_password
 )
 
 db_Info = connection.get_server_info()
 print("Connected to MySQL Server version", db_Info)
 
 # Create an engine using mysql connector 
-engine = create_engine(f'mysql+mysqlconnector://{user}:{password}@{host}/{database}')
+engine = create_engine(f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}/{db_name}')
 
 @app.route('/')
 def homepage():
@@ -62,15 +71,6 @@ def write_to_csv(data):
         writer = csv.writer(csvfile)
         writer.writerow([email, subject, message])
 
-
-@app.route('/submit_form', methods=['GET', 'POST'])
-def submit_form():
-    if request.method == 'POST':
-        data = request.form.to_dict()
-        write_to_csv(data)
-        return redirect('/thankyou.html')
-    else:
-        return 'Something went wrong!'
 
 if __name__ == '__main__':
     app.run(debug=True)

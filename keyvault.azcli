@@ -1,0 +1,145 @@
+#https://docs.microsoft.com/nl-nl/azure/active-directory/managed-identities-azure-resources/tutorial-windows-vm-access-arm
+
+az login  # 
+
+mySubscription="Azure For Students"
+az account set --subscription $mySubscription
+
+az account show --query id --output tsv
+
+SubscriptionId=$(az account show --query id --output tsv)
+echo $SubscriptionId
+
+
+az resource list
+
+az resource list --query [].[name,location] --output table
+az group list --query [].[name,location] --output table
+
+
+MyRgName='keyvaultazure'
+Location='westeurope'
+
+az group create \
+  --location $Location \
+  --resource-group $MyRgName
+
+MyKVName=KeyVault2025xyz #change
+MySecretName=keyvaultsecret #change
+
+# Gives an error lter on , when setiing a value
+#az keyvault create \
+    #--name $MyKVName \
+    #--resource-group $MyRgName \
+    #--location $Location
+
+
+az keyvault list --query [].[name,location] --output table
+
+# az keyvault delete \
+#   --name $MyKVName
+
+# az keyvault purge \
+#   --name $MyKVName
+
+# try again with additional rights
+az keyvault create \
+    --name $MyKVName \
+    --resource-group $MyRgName \
+    --location $Location \
+    --enable-rbac-authorization false  
+
+az keyvault secret set \
+  --vault-name $MyKVName \
+  --name "DBHost" \
+  --value "oege.ie.hva.nl"
+
+az keyvault secret set \
+  --vault-name $MyKVName \
+  --name "DBName" \
+  --value "zkumarg"
+
+az keyvault secret set \
+  --vault-name $MyKVName \
+  --name "DBUser" \
+  --value "kumarg"
+
+az keyvault secret set \
+  --vault-name $MyKVName\
+  --name $MySecretName \
+  --value "3iJnwqAn8tLjm+ep" 
+
+az keyvault secret list \
+  --vault-name $MyKVName  
+
+az keyvault secret show \
+  --vault-name $MyKVName\
+  --name $MySecretName 
+
+# Now you can test locally, by setting the keyvault url in the .env file
+
+# For deployment to Azure uncomment line 12 in app.py and comment line 15
+
+APP_SERVICE_PLAN_NAME='asp_FlaskkeyVault'
+
+az appservice plan create \
+    --name $APP_SERVICE_PLAN_NAME \
+    --resource-group $MyRgName  \
+    --is-linux
+
+WEB_APP_NAME='KeyVaultxyz'
+
+az webapp create\
+    --name $WEB_APP_NAME \
+    --plan $APP_SERVICE_PLAN_NAME\
+    --runtime 'PYTHON:3.9' \
+    --resource-group $MyRgName \
+    --query 'defaultHostName' \
+    --output table
+
+# Before publishing we need to set the rightsbto access the keyvault
+# First we need assign an identity
+#Important line 87 to 89 
+az webapp identity assign \
+    --name $WEB_APP_NAME \
+    --resource-group $MyRgName
+
+az webapp identity show \
+    --name $WEB_APP_NAME \
+    --resource-group $MyRgName \
+    --query principalId \
+    --output tsv
+
+WEB_APP_OBJECT_ID=$(az webapp identity show --name $WEB_APP_NAME --resource-group $MyRgName --query principalId --output tsv)
+
+echo $WEB_APP_OBJECT_ID    
+
+# Set a read role for the web app to the KeyFault
+
+az keyvault set-policy \
+    --name $MyKVName \
+    --object-id $WEB_APP_OBJECT_ID \
+    --resource-group $MyRgName \
+    --secret-permissions get list
+
+# Set web config for the .env variable
+
+az webapp config appsettings set \
+    --name $WEB_APP_NAME \
+    --resource-group $MyRgName \
+    --settings KEY_VAULT_URL="https://$MyKVName.vault.azure.net/" 
+    
+
+az webapp config appsettings set \
+    --name $WEB_APP_NAME \
+    --resource-group $MyRgName \
+    --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true               
+
+# publish app
+az webapp up\
+    --name $WEB_APP_NAME \
+    --plan $APP_SERVICE_PLAN_NAME\
+    --runtime 'PYTHON:3.9' \
+    --resource-group  $MyRgName \
+    --query 'defaultHostName' \
+    --output table
