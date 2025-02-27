@@ -1,25 +1,26 @@
 import csv
 from flask import Flask, render_template, url_for, request, redirect
-import pandas as pd
-from sqlalchemy import create_engine, text
 import mysql.connector
 import os
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, AzureCliCredential
 from azure.keyvault.secrets import SecretClient
 
 app = Flask(__name__)
 
-KEY_VAULT_URL = os.getenv("KEY_VAULT_URL", "https://KeyVault2025xyz.vault.azure.net/")
-
+print ("1")
+KEY_VAULT_URL = os.getenv("vault_url", "https://KeyVault2025xyz.vault.azure.net/")
+print (KEY_VAULT_URL)
 credential = DefaultAzureCredential()
-
+print ("2")
 client = SecretClient(vault_url=KEY_VAULT_URL, credential=credential)
-
+print ("2.5")
 db_host = client.get_secret("DBHost").value
+print ("2.6")
 db_name = client.get_secret("DBName").value
 db_user = client.get_secret("DBUser").value
-db_password = client.get_secret("Secretsecret").value
+db_password = client.get_secret("keyvaultsecret").value
 
+print ("3")
 
 # Establish connection using mysql.connector
 connection = mysql.connector.connect(
@@ -32,8 +33,6 @@ connection = mysql.connector.connect(
 db_Info = connection.get_server_info()
 print("Connected to MySQL Server version", db_Info)
 
-# Create an engine using mysql connector 
-engine = create_engine(f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}/{db_name}')
 
 @app.route('/')
 def homepage():
